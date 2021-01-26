@@ -95,6 +95,7 @@ public class TimeInABottleItem extends Item {
         return super.useOnBlock(context);
     }
 
+    //The seemingly arbitrary number (622080000) is the number of ticks in 360 days
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (!world.isClient) {
