@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "timeinabottle",
+  "version": "${version}",
+  "name": "Time in a Bottle",
+  "description": "Adds the Random Things' Time in a Bottle portable tick accelerator",
+
+  "authors": [
+    "alkyaLy"
+  ],
+  "contact": {
+    "sources": "https://github.com/alkyaly/Time-in-a-Bottle",
+    "issues": "https://github.com/alkyaly/Time-in-a-Bottle/issues"
+  },
+
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.alkyaly.timeinabottle.TimeInABottle"
+    ],
+    "client": [
+      "io.github.alkyaly.timeinabottle.TimeInABottleClient"
+    ]
+  },
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": ">=1.16.2"
+  }
+}
