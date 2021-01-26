@@ -1,9 +1,9 @@
-# Time in a Bottle
+# [Time in a Bottle](https://www.curseforge.com/minecraft/mc-mods/time-in-a-bottle)
 
 Random Things Time in a Bottle, ported to Fabric.
+Requires Fabric-API
 
 ## **There's no rendering for the acceleration, i plan to do it, but not now**
-## **Also, might be unstable, didn't test out of Dev-environment at all**
 
 ### Credits
 * [Lumien231](https://www.curseforge.com/members/lumien231), for creating [Random Things](https://www.curseforge.com/minecraft/mc-mods/random-things).
