@@ -44,6 +44,8 @@ public class AcceleratorEntity extends Entity {
     public AcceleratorEntity(EntityType<? extends Entity> type, World world, BlockPos target) {
         this(TimeInABottle.ACCELERATOR, world);
         this.target = target;
+        this.setPos(target.getX(), target.getY(), target.getZ());
+        this.updateTrackedPosition(target.getX(), target.getY(), target.getZ());
     }
 
     @Override
