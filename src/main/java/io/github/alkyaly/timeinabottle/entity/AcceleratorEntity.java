@@ -66,7 +66,7 @@ public class AcceleratorEntity extends Entity {
                 }
             }
         }
-        remainingTime -= 1;
+        remainingTime--;
         if (remainingTime == 0 && !world.isClient) {
             remove();
         }
