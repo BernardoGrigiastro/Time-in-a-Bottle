@@ -4,11 +4,8 @@ package io.github.alkyaly.timeinabottle.item;
 import io.github.alkyaly.timeinabottle.ModConfig;
 import io.github.alkyaly.timeinabottle.TimeInABottle;
 import io.github.alkyaly.timeinabottle.entity.AcceleratorEntity;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,7 +28,7 @@ import java.util.List;
 
 public class TimeInABottleItem extends Item {
 
-    public TimeInABottleItem(FabricItemSettings settings) {
+    public TimeInABottleItem(Item.Settings settings) {
         super(settings);
     }
 
@@ -67,6 +64,7 @@ public class TimeInABottleItem extends Item {
                         eta.setRemainingTime(eta.getRemainingTime() + timeAdded);
 
                         getRespectiveSoundEvent(world, pos, nextRate);
+                        player.increaseStat(TimeInABottle.TIME_IN_A_BOTTLE_USAGES, 1);
                         return ActionResult.SUCCESS;
                     }
                 }
@@ -83,11 +81,10 @@ public class TimeInABottleItem extends Item {
                     AcceleratorEntity accelerator = new AcceleratorEntity(TimeInABottle.ACCELERATOR, world, pos);
                     accelerator.setTimeRate(1);
                     accelerator.setRemainingTime(20 * 30);
-                    accelerator.setPos(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
                     accelerator.setBoundingBox(new Box(pos));
                     world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5f, 0.749154f);
                     world.spawnEntity(accelerator);
-
+                    player.increaseStat(TimeInABottle.TIME_IN_A_BOTTLE_USAGES, 1);
                     return ActionResult.SUCCESS;
                 }
             }
@@ -99,11 +96,11 @@ public class TimeInABottleItem extends Item {
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (!world.isClient) {
-            int time = ModConfig.TIME_SECOND;
+            int time = Math.abs(ModConfig.TIME_SECOND);
             if (world.getTime() % time == 0) {
                 CompoundTag timeData = stack.getOrCreateSubTag("timeData");
                 if (timeData.getInt("storedTime") < 622080000) {
-                    timeData.putInt("storedTime", timeData.getInt("storedTime") + 20);
+                    timeData.putInt("storedTime", timeData.getInt("storedTime") + time);
                 }
             }
 
@@ -121,7 +118,7 @@ public class TimeInABottleItem extends Item {
 
                         if (originalTime < duplicateTime) {
                             originalTimeData.putInt("storedTime", 0);
-                            duplicateTimeData.putInt("storedTime", duplicateTime - 40);
+                            duplicateTimeData.putInt("storedTime", duplicateTime - 60);
                         }
                     }
                 }

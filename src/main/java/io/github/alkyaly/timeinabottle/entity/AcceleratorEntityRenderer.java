@@ -14,11 +14,11 @@ public class AcceleratorEntityRenderer extends EntityRenderer<AcceleratorEntity>
 
     @Override
     public void render(AcceleratorEntity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
 
         /*
             TODO: Learn how to render those things, or pay someone to do it
          */
+        super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
     }
 
     @Override

@@ -10,6 +10,8 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.stat.StatFormatter;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.registry.Registry;
@@ -20,7 +22,6 @@ public class TimeInABottle implements ModInitializer {
 
     public static final String MOD_ID = "timeinabottle";
     public static final Logger LOGGER = LogManager.getLogger("Time in a Bottle");
-
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
     }
@@ -32,15 +33,15 @@ public class TimeInABottle implements ModInitializer {
         FabricEntityTypeBuilder.<AcceleratorEntity>create(SpawnGroup.MISC, AcceleratorEntity::new)
                 .dimensions(EntityDimensions.fixed(.1f, .1f)).build()
     );
+    public static final Identifier TIME_IN_A_BOTTLE_USAGES = id("time_in_a_bottle_usages");
 
     @Override
     public void onInitialize() {
         LOGGER.info("Called onInitialize.");
-        LOGGER.info("Creating/Reading Config");
         ModConfig config = MicroConfig.getOrCreate("time_in_a_bottle", new ModConfig());
-        LOGGER.info("Registering Items");
+        Registry.register(Registry.CUSTOM_STAT, "time_in_a_bottle_usages", TIME_IN_A_BOTTLE_USAGES);
         Registry.register(Registry.ITEM, id("time_in_a_bottle"), TIME_IN_A_BOTTLE);
-        LOGGER.info("Registering Entities");
+        Stats.CUSTOM.getOrCreateStat(TIME_IN_A_BOTTLE_USAGES, StatFormatter.DEFAULT);
         LOGGER.info("Finished initializing");
     }
 }

@@ -22,7 +22,6 @@ public class TimeInABottleClient implements ClientModInitializer {
     public void onInitializeClient() {
         EntityRendererRegistry.INSTANCE.register(TimeInABottle.ACCELERATOR, (dispatcher, context) -> new AcceleratorEntityRenderer(dispatcher));
 
-        // Super cool, mojank, don't y'all love when some non-sense things are hardcoded?
         ClientSidePacketRegistry.INSTANCE.register(EntityPacketUtils.SPAWN_PACKET_ID, ((context, buffer) -> {
             final EntityType<?> type = Registry.ENTITY_TYPE.get(buffer.readVarInt());
             final UUID entityUUID = buffer.readUuid();
@@ -38,7 +37,6 @@ public class TimeInABottleClient implements ClientModInitializer {
                 if (clientWorld != null) {
                     clientWorld.addEntity(entityID, entity);
                 }
-
             });
         }));
     }
