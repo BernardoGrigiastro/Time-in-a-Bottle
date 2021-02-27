@@ -28,7 +28,7 @@ import java.util.List;
 
 public class TimeInABottleItem extends Item {
 
-    public TimeInABottleItem(Item.Settings settings) {
+    public TimeInABottleItem(Settings settings) {
         super(settings);
     }
 
@@ -78,7 +78,7 @@ public class TimeInABottleItem extends Item {
                         timeData.putInt("storedTime", timeAvailable - 20 * 30);
                     }
 
-                    AcceleratorEntity accelerator = new AcceleratorEntity(TimeInABottle.ACCELERATOR, world, pos);
+                    AcceleratorEntity accelerator = new AcceleratorEntity(world, pos);
                     accelerator.setTimeRate(1);
                     accelerator.setRemainingTime(20 * 30);
                     accelerator.setBoundingBox(new Box(pos));
@@ -92,14 +92,13 @@ public class TimeInABottleItem extends Item {
         return super.useOnBlock(context);
     }
 
-    //The seemingly arbitrary number (622080000) is the number of ticks in 360 days
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (!world.isClient) {
             int time = Math.abs(ModConfig.TIME_SECOND);
             if (world.getTime() % time == 0) {
                 CompoundTag timeData = stack.getOrCreateSubTag("timeData");
-                if (timeData.getInt("storedTime") < 622080000) {
+                if (timeData.getInt("storedTime") < Math.abs(ModConfig.MAX_TIME)) {
                     timeData.putInt("storedTime", timeData.getInt("storedTime") + time);
                 }
             }
@@ -108,7 +107,6 @@ public class TimeInABottleItem extends Item {
                 ServerPlayerEntity playerEntity = (ServerPlayerEntity) entity;
                 for (int i = 0; i < playerEntity.inventory.size(); i++) {
                     ItemStack itemStack = playerEntity.inventory.getStack(i);
-
                     if (itemStack.getItem() == this && itemStack != stack) {
                         CompoundTag duplicateTimeData = itemStack.getOrCreateSubTag("timeData");
                         CompoundTag originalTimeData = stack.getOrCreateSubTag("timeData");
@@ -118,7 +116,7 @@ public class TimeInABottleItem extends Item {
 
                         if (originalTime < duplicateTime) {
                             originalTimeData.putInt("storedTime", 0);
-                            duplicateTimeData.putInt("storedTime", duplicateTime - 60);
+                            duplicateTimeData.putInt("storedTime", duplicateTime - time * 3);
                         }
                     }
                 }

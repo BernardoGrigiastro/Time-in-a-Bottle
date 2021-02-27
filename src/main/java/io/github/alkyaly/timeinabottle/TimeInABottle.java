@@ -19,7 +19,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class TimeInABottle implements ModInitializer {
-
     public static final String MOD_ID = "timeinabottle";
     public static final Logger LOGGER = LogManager.getLogger("Time in a Bottle");
     public static Identifier id(String path) {
@@ -42,6 +41,6 @@ public class TimeInABottle implements ModInitializer {
         Registry.register(Registry.CUSTOM_STAT, "time_in_a_bottle_usages", TIME_IN_A_BOTTLE_USAGES);
         Registry.register(Registry.ITEM, id("time_in_a_bottle"), TIME_IN_A_BOTTLE);
         Stats.CUSTOM.getOrCreateStat(TIME_IN_A_BOTTLE_USAGES, StatFormatter.DEFAULT);
-        LOGGER.info("Finished initializing");
+        LOGGER.info("Finished initializing.");
     }
 }

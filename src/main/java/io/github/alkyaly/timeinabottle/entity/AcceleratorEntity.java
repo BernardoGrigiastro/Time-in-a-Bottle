@@ -13,6 +13,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +30,6 @@ public class AcceleratorEntity extends Entity {
 
     public AcceleratorEntity(EntityType<? extends Entity> type, World world) {
         super(type, world);
-        this.noClip = true;
     }
 
     @Environment(EnvType.CLIENT)
@@ -41,8 +41,9 @@ public class AcceleratorEntity extends Entity {
         setUuid(entityUUID);
     }
 
-    public AcceleratorEntity(EntityType<? extends Entity> type, World world, BlockPos target) {
-        this(TimeInABottle.ACCELERATOR, world);
+    public AcceleratorEntity(World world, BlockPos target) {
+        super(TimeInABottle.ACCELERATOR, world);
+        this.noClip = true;
         this.target = target;
         this.setPos(target.getX(), target.getY(), target.getZ());
         this.updateTrackedPosition(target.getX(), target.getY(), target.getZ());
@@ -51,17 +52,17 @@ public class AcceleratorEntity extends Entity {
     @Override
     public void tick() {
         super.tick();
-        if(!world.isClient) {
-            BlockEntity be = world.getBlockEntity(target);
+        if(!world.isClient && this.target != null) {
+            BlockEntity be = null;
+            if (world.getBlockEntity(target) != null) {
+                be = world.getBlockEntity(target);
+            }
             for (int i = 0; i < getTimeRate(); i++) {
-
-                if (be instanceof Tickable) {
-                    ((Tickable) be).tick();
-                }
-                if (world.random.nextInt(1365 / (world.getGameRules().getInt(GameRules.RANDOM_TICK_SPEED) * ModConfig.RANDOM_TICK)) == 0) {
+                if (be instanceof Tickable) ((Tickable) be).tick();
+                if (world.random.nextInt(1500 / (world.getGameRules().getInt(GameRules.RANDOM_TICK_SPEED) * ModConfig.RANDOM_TICK)) == 0) {
                     BlockState targetBlock = world.getBlockState(target);
                     if (targetBlock.getBlock().hasRandomTicks(targetBlock)) {
-                        targetBlock.getBlock().randomTick(targetBlock, (ServerWorld) world, target, world.random);
+                        targetBlock.randomTick((ServerWorld) world, target, world.random);
                     }
                 }
             }
@@ -79,14 +80,21 @@ public class AcceleratorEntity extends Entity {
 
     @Override
     protected void readCustomDataFromTag(CompoundTag tag) {
-        target = readBlockPosFromTag(tag, "target");
+        if (tag.contains("posX")) {
+            target = new BlockPos(tag.getInt("posX"), tag.getInt("posY"), tag.getInt("posZ"));
+        }
         remainingTime = tag.getInt("remainingTime");
         setTimeRate(tag.getInt("timeRate"));
     }
 
     @Override
     protected void writeCustomDataToTag(CompoundTag tag) {
-        writeBlockPosToTag(tag, "target", target);
+        BlockPos pos = getBlockPos();
+        if (pos != null) {
+            tag.putInt("posX", pos.getX());
+            tag.putInt("posY", pos.getY());
+            tag.putInt("posZ", pos.getZ());
+        }
         tag.putInt("remainingTime", remainingTime);
         tag.putInt("timeRate", getTimeRate());
     }
@@ -110,18 +118,5 @@ public class AcceleratorEntity extends Entity {
 
     public int getRemainingTime() {
         return remainingTime;
-    }
-
-    public static void writeBlockPosToTag(CompoundTag tag, String tagName, BlockPos pos) {
-        CompoundTag posPounds = new CompoundTag();
-        posPounds.putInt("posX", pos.getX());
-        posPounds.putInt("posY", pos.getY());
-        posPounds.putInt("getZ", pos.getZ());
-        tag.put(tagName, posPounds);
-    }
-
-    public static BlockPos readBlockPosFromTag(CompoundTag tag, String tagName) {
-        CompoundTag posPounds = (CompoundTag) tag.get(tagName);
-        return new BlockPos(posPounds.getInt("posX"), posPounds.getInt("posY"), posPounds.getInt("posZ"));
     }
 }
