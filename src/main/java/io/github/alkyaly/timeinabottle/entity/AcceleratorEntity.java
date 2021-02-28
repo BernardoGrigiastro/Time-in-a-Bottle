@@ -51,6 +51,7 @@ public class AcceleratorEntity extends Entity {
     @Override
     public void tick() {
         super.tick();
+        int randomTickSpeed = world.getGameRules().getInt(GameRules.RANDOM_TICK_SPEED);
         if(!world.isClient && this.target != null) {
             BlockEntity be = null;
             if (world.getBlockEntity(target) != null) {
@@ -58,9 +59,9 @@ public class AcceleratorEntity extends Entity {
             }
             for (int i = 0; i < getTimeRate(); i++) {
                 if (be instanceof Tickable) ((Tickable) be).tick();
-                if (world.random.nextInt(1500 / (world.getGameRules().getInt(GameRules.RANDOM_TICK_SPEED) * ModConfig.RANDOM_TICK)) == 0) {
+                if (world.random.nextInt(1500 / ((Math.abs(randomTickSpeed) + 1) * ModConfig.RANDOM_TICK)) == 0) {
                     BlockState targetBlock = world.getBlockState(target);
-                    if (targetBlock.getBlock().hasRandomTicks(targetBlock)) {
+                    if (targetBlock.getBlock().hasRandomTicks(targetBlock) && !(randomTickSpeed <= 0)) {
                         targetBlock.randomTick((ServerWorld) world, target, world.random);
                     }
                 }
