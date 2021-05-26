@@ -33,7 +33,7 @@ public class AcceleratorEntityRenderer extends EntityRenderer<AcceleratorEntity>
         for(Direction dir : Direction.values()) {
             matrices.push();
             Vec3i dirVector = dir.getVector();
-            float angle = -((entity.age + tickDelta) * 2) % 360; // entity.getRemaningTime() makes the rotation jittery
+            float angle = -(entity.getAngle() + (tickDelta * entity.getTimeRate())) % 360; // entity.getRemaningTime() makes the rotation jittery
             matrices.multiply(new Quaternion(new Vector3f(dirVector.getX(), dirVector.getY(), dirVector.getZ()), angle, true));
             MatrixStack.Entry entry = matrices.peek();
 
