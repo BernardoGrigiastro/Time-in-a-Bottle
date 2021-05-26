@@ -26,6 +26,8 @@ public class AcceleratorEntity extends Entity {
     private static final TrackedData<Integer> TIME_RATE = DataTracker.registerData(AcceleratorEntity.class, TrackedDataHandlerRegistry.INTEGER);
     int remainingTime;
     BlockPos target;
+    @Environment(EnvType.CLIENT)
+    int angle;
 
     public AcceleratorEntity(EntityType<? extends Entity> type, World world) {
         super(type, world);
@@ -70,6 +72,9 @@ public class AcceleratorEntity extends Entity {
         remainingTime--;
         if (remainingTime == 0 && !world.isClient) {
             remove();
+        }
+        if(world.isClient) {
+            this.angle = this.angle + this.getTimeRate();
         }
     }
 
@@ -118,5 +123,11 @@ public class AcceleratorEntity extends Entity {
 
     public int getRemainingTime() {
         return remainingTime;
+    }
+    
+    // This field is to prevent the overlay from jumping when increasing the time rate
+    @Environment(EnvType.CLIENT)
+    public int getAngle() {
+        return this.angle;
     }
 }
