@@ -8,6 +8,10 @@
   "authors": [
     "alkyaLy"
   ],
+  "contributors": [
+    "val = int(1)"
+  ],
+
   "contact": {
     "sources": "https://github.com/alkyaly/Time-in-a-Bottle",
     "issues": "https://github.com/alkyaly/Time-in-a-Bottle/issues"
