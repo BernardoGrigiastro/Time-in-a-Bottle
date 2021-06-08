@@ -4,22 +4,22 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.client.util.math.Vector4f;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.Vector4f;
 
 public class AcceleratorEntityRenderer extends EntityRenderer<AcceleratorEntity> {
 
     private static final Identifier BOTTLE_TEXTURE = new Identifier("timeinabottle", "textures/item/time_in_a_bottle.png");
 
-    public AcceleratorEntityRenderer(EntityRenderDispatcher dispatcher) {
-        super(dispatcher);
+    public AcceleratorEntityRenderer(EntityRendererFactory.Context ctx) {
+        super(ctx);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class AcceleratorEntityRenderer extends EntityRenderer<AcceleratorEntity>
             matrices.push();
             Vec3i dirVector = dir.getVector();
             float angle = -(entity.getAngle() + (tickDelta * entity.getTimeRate())) % 360; // entity.getRemaningTime() makes the rotation jittery
-            matrices.multiply(new Quaternion(new Vector3f(dirVector.getX(), dirVector.getY(), dirVector.getZ()), angle, true));
+            matrices.multiply(new Quaternion(new Vec3f(dirVector.getX(), dirVector.getY(), dirVector.getZ()), angle, true));
             MatrixStack.Entry entry = matrices.peek();
 
             float offset = 0.5001f * (dir.getDirection() == Direction.AxisDirection.NEGATIVE ? -1 : 1); // 0.5001 is to prevent Z-fighting            

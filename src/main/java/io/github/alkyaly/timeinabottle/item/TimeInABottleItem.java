@@ -1,8 +1,6 @@
 package io.github.alkyaly.timeinabottle.item;
 
-
 import io.github.alkyaly.timeinabottle.ModConfig;
-import io.github.alkyaly.timeinabottle.TimeInABottle;
 import io.github.alkyaly.timeinabottle.entity.AcceleratorEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -12,7 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -50,13 +48,13 @@ public class TimeInABottleItem extends Item {
                 if (currentRate < 32) {
                     int nextRate = currentRate * 2;
                     int timeRequired = nextRate / 2 * 20 * 30;
-                    CompoundTag timeData = stack.getSubTag("timeData");
+                    NbtCompound timeData = stack.getSubTag("timeData");
                     int timeAvailable = timeData.getInt("storedTime");
 
                     if (timeAvailable >= timeRequired) {
                         int timeAdded = (nextRate * usedUpTime - currentRate * usedUpTime) / nextRate;
 
-                        if (!player.abilities.creativeMode) {
+                        if (!player.getAbilities().creativeMode) {
                             timeData.putInt("storedTime", timeAvailable - timeRequired);
                         }
 
@@ -64,17 +62,15 @@ public class TimeInABottleItem extends Item {
                         eta.setRemainingTime(eta.getRemainingTime() + timeAdded);
 
                         getRespectiveSoundEvent(world, pos, nextRate);
-                        player.increaseStat(TimeInABottle.TIME_IN_A_BOTTLE_USAGES, 1);
                         return ActionResult.SUCCESS;
                     }
                 }
-
             } else {
-                CompoundTag timeData = stack.getSubTag("timeData");
+                NbtCompound timeData = stack.getSubTag("timeData");
                 int timeAvailable = timeData.getInt("storedTime");
 
                 if (timeAvailable >= 20 * 30) {
-                    if (!player.abilities.creativeMode) {
+                    if (!player.getAbilities().creativeMode) {
                         timeData.putInt("storedTime", timeAvailable - 20 * 30);
                     }
 
@@ -84,7 +80,7 @@ public class TimeInABottleItem extends Item {
                     accelerator.setBoundingBox(new Box(pos));
                     world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5f, 0.749154f);
                     world.spawnEntity(accelerator);
-                    player.increaseStat(TimeInABottle.TIME_IN_A_BOTTLE_USAGES, 1);
+
                     return ActionResult.SUCCESS;
                 }
             }
@@ -97,7 +93,7 @@ public class TimeInABottleItem extends Item {
         if (!world.isClient) {
             int time = Math.abs(ModConfig.TIME_SECOND);
             if (world.getTime() % time == 0) {
-                CompoundTag timeData = stack.getOrCreateSubTag("timeData");
+                NbtCompound timeData = stack.getOrCreateSubTag("timeData");
                 if (timeData.getInt("storedTime") < Math.abs(ModConfig.MAX_TIME)) {
                     timeData.putInt("storedTime", timeData.getInt("storedTime") + time);
                 }
@@ -105,11 +101,11 @@ public class TimeInABottleItem extends Item {
 
             if (world.getTime() % 60 == 0 && entity instanceof ServerPlayerEntity) {
                 ServerPlayerEntity playerEntity = (ServerPlayerEntity) entity;
-                for (int i = 0; i < playerEntity.inventory.size(); i++) {
-                    ItemStack itemStack = playerEntity.inventory.getStack(i);
+                for (int i = 0; i < playerEntity.getInventory().size(); i++) {
+                    ItemStack itemStack = playerEntity.getInventory().getStack(i);
                     if (itemStack.getItem() == this && itemStack != stack) {
-                        CompoundTag duplicateTimeData = itemStack.getOrCreateSubTag("timeData");
-                        CompoundTag originalTimeData = stack.getOrCreateSubTag("timeData");
+                        NbtCompound duplicateTimeData = itemStack.getOrCreateSubTag("timeData");
+                        NbtCompound originalTimeData = stack.getOrCreateSubTag("timeData");
 
                         int originalTime = originalTimeData.getInt("storedTime");
                         int duplicateTime = duplicateTimeData.getInt("storedTime");

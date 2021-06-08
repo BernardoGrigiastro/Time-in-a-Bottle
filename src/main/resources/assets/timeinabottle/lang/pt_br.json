@@ -1,5 +1,4 @@
 {
     "item.timeinabottle.time_in_a_bottle": "Tempo numa garrafa" ,
-    "item.timeinabottle.time_in_a_bottle.tooltip": "%d H | %d M | %d S",
-    "stat.timeinabottle.time_in_a_bottle_usages": "Uso do Tempo numa Garrafa"
+    "item.timeinabottle.time_in_a_bottle.tooltip": "%d H | %d M | %d S"
 }
