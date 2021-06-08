@@ -52,8 +52,7 @@ public class AcceleratorEntity extends Entity {
             BlockState state = world.getBlockState(getBlockPos());
             BlockEntity be = world.getBlockEntity(getBlockPos());
 
-            if (state.getBlock() instanceof BlockEntityProvider && be != null) {
-                BlockEntityProvider provider = (BlockEntityProvider) world.getBlockState(getBlockPos()).getBlock();
+            if (state.getBlock() instanceof BlockEntityProvider provider && be != null) {
                 //noinspection unchecked
                 ticker = provider.getTicker(world, state, (BlockEntityType<BlockEntity>) be.getType());
             }

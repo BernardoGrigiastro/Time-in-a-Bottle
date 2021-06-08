@@ -99,8 +99,7 @@ public class TimeInABottleItem extends Item {
                 }
             }
 
-            if (world.getTime() % 60 == 0 && entity instanceof ServerPlayerEntity) {
-                ServerPlayerEntity playerEntity = (ServerPlayerEntity) entity;
+            if (world.getTime() % 60 == 0 && entity instanceof ServerPlayerEntity playerEntity) {
                 for (int i = 0; i < playerEntity.getInventory().size(); i++) {
                     ItemStack itemStack = playerEntity.getInventory().getStack(i);
                     if (itemStack.getItem() == this && itemStack != stack) {
@@ -135,21 +134,11 @@ public class TimeInABottleItem extends Item {
 
     private void getRespectiveSoundEvent(World world, BlockPos pos, int nextRate) {
         switch (nextRate) {
-            case 2:
-                world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 0.793701F);
-                break;
-            case 4:
-            case 32:
-                world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 0.890899F);
-                break;
-            case 8:
-                world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 1.059463F);
-                break;
-            case 16:
-                world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 0.943874F);
-                break;
-            default:
-                world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 1F);
+            case 2 -> world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 0.793701F);
+            case 4, 32 -> world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 0.890899F);
+            case 8 -> world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 1.059463F);
+            case 16 -> world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 0.943874F);
+            default -> world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 1F);
         }
     }
 }

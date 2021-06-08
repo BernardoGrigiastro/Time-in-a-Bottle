@@ -30,7 +30,7 @@ public class AcceleratorEntityRenderer extends EntityRenderer<AcceleratorEntity>
         matrices.translate(0.5, 0.5, 0.5);
         
         Vector4f vec1, vec2, vec3, vec4;
-        for(Direction dir : Direction.values()) {
+        for (Direction dir : Direction.values()) {
             matrices.push();
             Vec3i dirVector = dir.getVector();
             float angle = -(entity.getAngle() + (tickDelta * entity.getTimeRate())) % 360; // entity.getRemaningTime() makes the rotation jittery
@@ -38,12 +38,12 @@ public class AcceleratorEntityRenderer extends EntityRenderer<AcceleratorEntity>
             MatrixStack.Entry entry = matrices.peek();
 
             float offset = 0.5001f * (dir.getDirection() == Direction.AxisDirection.NEGATIVE ? -1 : 1); // 0.5001 is to prevent Z-fighting            
-            if(dir.getAxis() == Direction.Axis.X) {
+            if (dir.getAxis() == Direction.Axis.X) {
                 vec1 = new Vector4f(offset, -0.5f, -0.5f, 1.0f);
                 vec2 = new Vector4f(offset,  0.5f, -0.5f, 1.0f);
                 vec3 = new Vector4f(offset,  0.5f,  0.5f, 1.0f);
                 vec4 = new Vector4f(offset, -0.5f,  0.5f, 1.0f);
-            } else if(dir.getAxis() == Direction.Axis.Y) {
+            } else if (dir.getAxis() == Direction.Axis.Y) {
                 vec1 = new Vector4f(-0.5f, offset, -0.5f, 1.0f);
                 vec2 = new Vector4f(-0.5f, offset,  0.5f, 1.0f);
                 vec3 = new Vector4f( 0.5f, offset,  0.5f, 1.0f);
