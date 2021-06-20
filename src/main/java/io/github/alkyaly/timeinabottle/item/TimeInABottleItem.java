@@ -99,7 +99,7 @@ public class TimeInABottleItem extends Item {
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (!world.isClient) {
             int time = Math.abs(TimeInABottle.config.getTimeSecond());
-            if (world.getTime() % time == 0) {
+            if (world.getTime() % 20 == 0) {
                 NbtCompound timeData = stack.getOrCreateSubTag("timeData");
                 if (timeData.getInt("storedTime") < Math.abs(TimeInABottle.config.getMaxTime())) {
                     timeData.putInt("storedTime", timeData.getInt("storedTime") + time);

@@ -71,7 +71,7 @@ public class AcceleratorEntity extends Entity {
         if (remainingTime == 0 && !world.isClient) {
             remove(RemovalReason.DISCARDED);
         }
-        if(world.isClient) {
+        if (world.isClient) {
             this.angle = this.angle + this.getTimeRate();
         }
     }

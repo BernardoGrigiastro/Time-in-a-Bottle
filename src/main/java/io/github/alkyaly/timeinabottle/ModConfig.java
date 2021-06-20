@@ -12,7 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -22,12 +21,15 @@ public class ModConfig {
 
     //I don't think using FastUtil's IntSet would have any advantage here.
     private final Set<Integer> speedLevels;
+    //The duration of the AcceleratorEntity.
     private int duration;
+    //The amount of time added to the Time in a Bottle in 20 ticks.
     private int timeSecond;
+    //The max amount of time a Time in a Bottle can store.
     private long maxTime;
 
     public ModConfig() {
-        //Preserve order
+        //LinkedHashMap so we can preserve the order.
         speedLevels = new LinkedHashSet<>();
 
         try {
