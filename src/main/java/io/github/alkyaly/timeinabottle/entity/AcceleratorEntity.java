@@ -1,10 +1,8 @@
 package io.github.alkyaly.timeinabottle.entity;
 
 import io.github.alkyaly.timeinabottle.TimeInABottle;
-import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -17,10 +15,9 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 public class AcceleratorEntity extends Entity {
@@ -107,15 +104,7 @@ public class AcceleratorEntity extends Entity {
 
     @Override
     public Packet<?> createSpawnPacket() {
-        final PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeVarInt(Registry.ENTITY_TYPE.getRawId(this.getType()));
-        buf.writeUuid(this.uuid);
-        buf.writeVarInt(this.getId());
-        buf.writeDouble(this.getX());
-        buf.writeDouble(this.getY());
-        buf.writeDouble(this.getZ());
-
-        return ServerPlayNetworking.createS2CPacket(TimeInABottle.id("spawn_entity"), buf);
+        return new EntitySpawnS2CPacket(this);
     }
 
     public void setTimeRate(int timeRate) {

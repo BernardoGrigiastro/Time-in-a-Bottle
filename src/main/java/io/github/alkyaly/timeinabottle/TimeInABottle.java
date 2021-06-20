@@ -32,7 +32,7 @@ public class TimeInABottle implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("Called onInitialize.");
-        ModConfig config = MicroConfig.getOrCreate("time_in_a_bottle", new ModConfig());
+        MicroConfig.getOrCreate("time_in_a_bottle", new ModConfig());
         Registry.register(Registry.ITEM, id("time_in_a_bottle"), TIME_IN_A_BOTTLE);
         LOGGER.info("Finished initializing.");
     }

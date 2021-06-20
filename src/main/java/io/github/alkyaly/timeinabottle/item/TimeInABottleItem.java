@@ -39,11 +39,11 @@ public class TimeInABottleItem extends Item {
         Box box = new Box(new BlockPos(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d)).shrink(.2f, .2f, .2f);
 
         if (!world.isClient) {
-            List<AcceleratorEntity> list = world.getEntitiesByClass(AcceleratorEntity.class, box, (e) -> true);
+            List<AcceleratorEntity> list = world.getEntitiesByClass(AcceleratorEntity.class, box, e -> true);
             if (!list.isEmpty()) {
-                AcceleratorEntity eta = list.get(0);
-                int currentRate = eta.getTimeRate();
-                int usedUpTime = 20 * 30 - eta.getRemainingTime();
+                AcceleratorEntity entity = list.get(0);
+                int currentRate = entity.getTimeRate();
+                int usedUpTime = 20 * 30 - entity.getRemainingTime();
 
                 if (currentRate < 32) {
                     int nextRate = currentRate * 2;
@@ -58,10 +58,10 @@ public class TimeInABottleItem extends Item {
                             timeData.putInt("storedTime", timeAvailable - timeRequired);
                         }
 
-                        eta.setTimeRate(nextRate);
-                        eta.setRemainingTime(eta.getRemainingTime() + timeAdded);
+                        entity.setTimeRate(nextRate);
+                        entity.setRemainingTime(entity.getRemainingTime() + timeAdded);
 
-                        getRespectiveSoundEvent(world, pos, nextRate);
+                        getSound(world, pos, nextRate);
                         return ActionResult.SUCCESS;
                     }
                 }
@@ -78,7 +78,8 @@ public class TimeInABottleItem extends Item {
                     accelerator.setTimeRate(1);
                     accelerator.setRemainingTime(20 * 30);
                     accelerator.setBoundingBox(new Box(pos));
-                    world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5f, 0.749154f);
+
+                    getSound(world, pos, accelerator.getTimeRate());
                     world.spawnEntity(accelerator);
 
                     return ActionResult.SUCCESS;
@@ -132,8 +133,9 @@ public class TimeInABottleItem extends Item {
         tooltip.add(new TranslatableText("item.timeinabottle.time_in_a_bottle.tooltip", hours, minutes, seconds).formatted(Formatting.AQUA));
     }
 
-    private void getRespectiveSoundEvent(World world, BlockPos pos, int nextRate) {
+    private void getSound(World world, BlockPos pos, int nextRate) {
         switch (nextRate) {
+            case 1 -> world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5f, 0.749154f);
             case 2 -> world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 0.793701F);
             case 4, 32 -> world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 0.890899F);
             case 8 -> world.playSound(null, pos, SoundEvents.BLOCK_NOTE_BLOCK_HARP, SoundCategory.BLOCKS, 0.5F, 1.059463F);
