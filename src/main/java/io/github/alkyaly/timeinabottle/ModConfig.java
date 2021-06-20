@@ -28,7 +28,7 @@ public class ModConfig {
     private long maxTime;
 
     public ModConfig() {
-        //LinkedHashMap so we can preserve the order.
+        //LinkedHashSet so we can preserve the order.
         speedLevels = new LinkedHashSet<>();
 
         try {
