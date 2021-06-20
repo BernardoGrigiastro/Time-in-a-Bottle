@@ -21,8 +21,8 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation "com.github.P03W:Microconfig:${project.microconfig_version}"
-    include "com.github.P03W:Microconfig:${project.microconfig_version}"
+    //modImplementation "com.github.P03W:Microconfig:${project.microconfig_version}"
+    //include "com.github.P03W:Microconfig:${project.microconfig_version}"
 }
 
 processResources {

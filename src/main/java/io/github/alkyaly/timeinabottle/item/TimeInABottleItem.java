@@ -1,6 +1,6 @@
 package io.github.alkyaly.timeinabottle.item;
 
-import io.github.alkyaly.timeinabottle.ModConfig;
+import io.github.alkyaly.timeinabottle.TimeInABottle;
 import io.github.alkyaly.timeinabottle.entity.AcceleratorEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -21,7 +21,9 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.ArrayUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 public class TimeInABottleItem extends Item {
@@ -34,20 +36,24 @@ public class TimeInABottleItem extends Item {
     public ActionResult useOnBlock(ItemUsageContext context) {
         PlayerEntity player = context.getPlayer();
         ItemStack stack = player.getStackInHand(context.getHand());
-        World world = context.getWorld();
-        BlockPos pos = context.getBlockPos();
-        Box box = new Box(new BlockPos(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d)).shrink(.2f, .2f, .2f);
+        var config = TimeInABottle.config;
+        var world = context.getWorld();
+        var pos = context.getBlockPos();
+        var box = new Box(new BlockPos(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d)).shrink(.2f, .2f, .2f);
 
         if (!world.isClient) {
             List<AcceleratorEntity> list = world.getEntitiesByClass(AcceleratorEntity.class, box, e -> true);
             if (!list.isEmpty()) {
                 AcceleratorEntity entity = list.get(0);
                 int currentRate = entity.getTimeRate();
-                int usedUpTime = 20 * 30 - entity.getRemainingTime();
+                int usedUpTime = 20 * config.getDuration() - entity.getRemainingTime();
 
-                if (currentRate < 32) {
-                    int nextRate = currentRate * 2;
-                    int timeRequired = nextRate / 2 * 20 * 30;
+                if (currentRate < Collections.max(config.getSpeedLevels())) {
+                    Integer[] speedLevels = config.getSpeedLevels().toArray(new Integer[0]);
+                    int crr = ArrayUtils.indexOf(speedLevels, currentRate);
+
+                    int nextRate = speedLevels[crr + 1];
+                    int timeRequired = nextRate / 2 * 20 * config.getDuration();
                     NbtCompound timeData = stack.getSubTag("timeData");
                     int timeAvailable = timeData.getInt("storedTime");
 
@@ -69,14 +75,14 @@ public class TimeInABottleItem extends Item {
                 NbtCompound timeData = stack.getSubTag("timeData");
                 int timeAvailable = timeData.getInt("storedTime");
 
-                if (timeAvailable >= 20 * 30) {
+                if (timeAvailable >= 20 * config.getDuration()) {
                     if (!player.getAbilities().creativeMode) {
-                        timeData.putInt("storedTime", timeAvailable - 20 * 30);
+                        timeData.putInt("storedTime", timeAvailable - 20 * config.getDuration());
                     }
 
                     AcceleratorEntity accelerator = new AcceleratorEntity(world, pos);
                     accelerator.setTimeRate(1);
-                    accelerator.setRemainingTime(20 * 30);
+                    accelerator.setRemainingTime(20 * config.getDuration());
                     accelerator.setBoundingBox(new Box(pos));
 
                     getSound(world, pos, accelerator.getTimeRate());
@@ -92,10 +98,10 @@ public class TimeInABottleItem extends Item {
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (!world.isClient) {
-            int time = Math.abs(ModConfig.TIME_SECOND);
+            int time = Math.abs(TimeInABottle.config.getTimeSecond());
             if (world.getTime() % time == 0) {
                 NbtCompound timeData = stack.getOrCreateSubTag("timeData");
-                if (timeData.getInt("storedTime") < Math.abs(ModConfig.MAX_TIME)) {
+                if (timeData.getInt("storedTime") < Math.abs(TimeInABottle.config.getMaxTime())) {
                     timeData.putInt("storedTime", timeData.getInt("storedTime") + time);
                 }
             }
