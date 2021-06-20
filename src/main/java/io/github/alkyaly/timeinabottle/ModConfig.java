@@ -19,7 +19,6 @@ public class ModConfig {
     public static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("time-in-a-bottle.json");
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    //I don't think using FastUtil's IntSet would have any advantage here.
     private final Set<Integer> speedLevels;
     //The duration of the AcceleratorEntity.
     private int duration;
