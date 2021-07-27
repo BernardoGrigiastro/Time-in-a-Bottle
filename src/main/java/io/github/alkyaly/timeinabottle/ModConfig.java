@@ -39,8 +39,7 @@ public class ModConfig {
                 writer.setIndent("  ");
                 GSON.toJson(addDefault(new JsonObject()), writer);
                 writer.close();
-                JsonObject obj = new JsonParser().parse(new String(Files.readAllBytes(PATH))).getAsJsonObject();
-                load(obj);
+                load();
             } catch (IOException e) {
                 TimeInABottle.LOGGER.fatal("Something went wrong while creating the config!", e);
             }
@@ -54,6 +53,7 @@ public class ModConfig {
 
     private void load(JsonObject obj) {
         JsonArray speedLevelElement = obj.get("speed-levels").getAsJsonArray();
+        speedLevels.clear(); //Clear the set before changing the values
         speedLevelElement.forEach(el -> speedLevels.add(el.getAsInt()));
 
         this.duration = obj.get("duration").getAsInt();
