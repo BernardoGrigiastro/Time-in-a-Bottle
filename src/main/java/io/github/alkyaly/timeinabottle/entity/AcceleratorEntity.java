@@ -1,8 +1,7 @@
 package io.github.alkyaly.timeinabottle.entity;
 
 import io.github.alkyaly.timeinabottle.TimeInABottle;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -17,16 +16,15 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 public class AcceleratorEntity extends Entity {
-
+    public static final TagKey<Block> ACCELERATION_BLACKLIST = TagKey.of(Registry.BLOCK_KEY, TimeInABottle.id("acceleration_blacklist"));
     private static final TrackedData<Integer> TIME_RATE = DataTracker.registerData(AcceleratorEntity.class, TrackedDataHandlerRegistry.INTEGER);
-    int remainingTime;
-    BlockPos target;
-    @Environment(EnvType.CLIENT)
-    int angle;
+    private int remainingTime;
 
     public AcceleratorEntity(EntityType<? extends Entity> type, World world) {
         super(type, world);
@@ -35,7 +33,6 @@ public class AcceleratorEntity extends Entity {
     public AcceleratorEntity(World world, BlockPos target) {
         super(TimeInABottle.ACCELERATOR, world);
         this.noClip = true;
-        this.target = target;
         this.setPos(target.getX(), target.getY(), target.getZ());
         this.updateTrackedPosition(target.getX(), target.getY(), target.getZ());
     }
@@ -43,12 +40,14 @@ public class AcceleratorEntity extends Entity {
     @Override
     public void tick() {
         super.tick();
+        if (world.isClient) return;
 
-        if (!world.isClient && this.target != null) {
-            BlockEntityTicker<BlockEntity> ticker = null;
-            BlockState state = world.getBlockState(getBlockPos());
-            BlockEntity be = world.getBlockEntity(getBlockPos());
+        var pos = getBlockPos();
+        BlockEntityTicker<BlockEntity> ticker = null;
+        BlockState state = world.getBlockState(pos);
+        BlockEntity be = world.getBlockEntity(pos);
 
+        if (!state.isIn(ACCELERATION_BLACKLIST)) {
             if (state.getBlock() instanceof BlockEntityProvider provider && be != null) {
                 //noinspection unchecked
                 ticker = provider.getTicker(world, state, (BlockEntityType<BlockEntity>) be.getType());
@@ -56,23 +55,20 @@ public class AcceleratorEntity extends Entity {
 
             for (int i = 0; i < getTimeRate(); i++) {
                 if (ticker != null) {
-                    ticker.tick(world, getBlockPos(), state, be);
+                    ticker.tick(world, pos, state, be);
                 }
 
                 if (world.random.nextInt(1365) == 0) {
-                    BlockState targetBlock = world.getBlockState(target);
+                    BlockState targetBlock = world.getBlockState(pos);
                     if (targetBlock.getBlock().hasRandomTicks(targetBlock)) {
-                        targetBlock.randomTick((ServerWorld) world, target, world.random);
+                        targetBlock.randomTick((ServerWorld) world, pos, world.random);
                     }
                 }
             }
         }
         remainingTime--;
-        if (remainingTime == 0 && !world.isClient) {
-            remove(RemovalReason.DISCARDED);
-        }
-        if (world.isClient) {
-            this.angle = this.angle + this.getTimeRate();
+        if (remainingTime <= 0) {
+            discard();
         }
     }
 
@@ -83,21 +79,12 @@ public class AcceleratorEntity extends Entity {
 
     @Override
     protected void readCustomDataFromNbt(NbtCompound tag) {
-        if (tag.contains("posX")) {
-            target = new BlockPos(tag.getInt("posX"), tag.getInt("posY"), tag.getInt("posZ"));
-        }
         remainingTime = tag.getInt("remainingTime");
         setTimeRate(tag.getInt("timeRate"));
     }
 
     @Override
     protected void writeCustomDataToNbt(NbtCompound tag) {
-        BlockPos pos = getBlockPos();
-        if (pos != null) {
-            tag.putInt("posX", pos.getX());
-            tag.putInt("posY", pos.getY());
-            tag.putInt("posZ", pos.getZ());
-        }
         tag.putInt("remainingTime", remainingTime);
         tag.putInt("timeRate", getTimeRate());
     }
@@ -121,11 +108,5 @@ public class AcceleratorEntity extends Entity {
 
     public int getRemainingTime() {
         return remainingTime;
-    }
-    
-    // This field is to prevent the overlay from jumping when increasing the time rate
-    @Environment(EnvType.CLIENT)
-    public int getAngle() {
-        return this.angle;
     }
 }

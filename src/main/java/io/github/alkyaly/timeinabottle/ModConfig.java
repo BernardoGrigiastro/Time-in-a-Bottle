@@ -12,14 +12,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ModConfig {
     public static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("time-in-a-bottle.json");
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    private final Set<Integer> speedLevels;
+    private int[] speedLevels;
     //The duration of the AcceleratorEntity.
     private int duration;
     //The amount of time added to the Time in a Bottle in 20 ticks.
@@ -28,9 +30,6 @@ public class ModConfig {
     private long maxTime;
 
     public ModConfig() {
-        //LinkedHashSet so we can preserve the order.
-        speedLevels = new LinkedHashSet<>();
-
         try {
             load();
         } catch (IOException ignored) {
@@ -47,15 +46,16 @@ public class ModConfig {
     }
 
     public void load() throws IOException {
-        JsonObject object = new JsonParser().parse(new String(Files.readAllBytes(PATH))).getAsJsonObject();
+        JsonObject object = JsonParser.parseString(new String(Files.readAllBytes(PATH))).getAsJsonObject();
         load(object);
     }
 
     private void load(JsonObject obj) {
         JsonArray speedLevelElement = obj.get("speed-levels").getAsJsonArray();
-        speedLevels.clear(); //Clear the set before changing the values
-        speedLevelElement.forEach(el -> speedLevels.add(el.getAsInt()));
-
+        speedLevels = new int[speedLevelElement.size()];
+        for (int i = 0; i < speedLevelElement.size(); i++) {
+            speedLevels[i] = speedLevelElement.get(i).getAsInt();
+        }
         this.duration = obj.get("duration").getAsInt();
         this.timeSecond = obj.get("time-second").getAsInt();
         this.maxTime = obj.get("max-time").getAsLong();
@@ -76,7 +76,7 @@ public class ModConfig {
         return obj;
     }
 
-    public Set<Integer> getSpeedLevels() {
+    public int[] getSpeedLevels() {
         return speedLevels;
     }
 

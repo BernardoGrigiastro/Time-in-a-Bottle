@@ -34,10 +34,8 @@ public class TimeInABottle implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("Called onInitialize.");
         config = new ModConfig();
         Registry.register(Registry.ITEM, id("time_in_a_bottle"), TIME_IN_A_BOTTLE);
-        LOGGER.info("Finished initializing.");
 
         ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((__, ___) -> {
             try {

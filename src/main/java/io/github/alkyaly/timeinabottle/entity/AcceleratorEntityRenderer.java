@@ -1,5 +1,6 @@
 package io.github.alkyaly.timeinabottle.entity;
 
+import io.github.alkyaly.timeinabottle.TimeInABottle;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -16,7 +17,7 @@ import net.minecraft.util.math.Vector4f;
 
 public class AcceleratorEntityRenderer extends EntityRenderer<AcceleratorEntity> {
 
-    private static final Identifier RING_TEXTURE = new Identifier("timeinabottle", "textures/time_ring.png");
+    private static final Identifier RING_TEXTURE = TimeInABottle.id("textures/time_ring.png");
 
     public AcceleratorEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
@@ -55,7 +56,10 @@ public class AcceleratorEntityRenderer extends EntityRenderer<AcceleratorEntity>
                 vec4 = new Vector4f( 0.5f, -0.5f, offset, 1.0f);
             }
             
-            vec1.transform(entry.getModel()); vec2.transform(entry.getModel()); vec3.transform(entry.getModel()); vec4.transform(entry.getModel());
+            vec1.transform(entry.getPositionMatrix());
+            vec2.transform(entry.getPositionMatrix());
+            vec3.transform(entry.getPositionMatrix());
+            vec4.transform(entry.getPositionMatrix());
             
             int frame;
             if (entity.getTimeRate() >= 32) {
