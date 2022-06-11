@@ -1,10 +1,6 @@
 package io.github.alkyaly.timeinabottle;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -12,10 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 public class ModConfig {
     public static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("time-in-a-bottle.json");
@@ -33,11 +25,9 @@ public class ModConfig {
         try {
             load();
         } catch (IOException ignored) {
-            try {
-                JsonWriter writer = new JsonWriter(new FileWriter(PATH.toString()));
+            try (var writer = new JsonWriter(new FileWriter(PATH.toFile()))) {
                 writer.setIndent("  ");
                 GSON.toJson(addDefault(new JsonObject()), writer);
-                writer.close();
                 load();
             } catch (IOException e) {
                 TimeInABottle.LOGGER.fatal("Something went wrong while creating the config!", e);
