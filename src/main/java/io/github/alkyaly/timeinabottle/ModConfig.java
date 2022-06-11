@@ -25,9 +25,11 @@ public class ModConfig {
         try {
             load();
         } catch (IOException ignored) {
-            try (var writer = new JsonWriter(new FileWriter(PATH.toFile()))) {
+            try {
+                JsonWriter writer = new JsonWriter(new FileWriter(PATH.toString()));
                 writer.setIndent("  ");
                 GSON.toJson(addDefault(new JsonObject()), writer);
+                writer.close();
                 load();
             } catch (IOException e) {
                 TimeInABottle.LOGGER.fatal("Something went wrong while creating the config!", e);
